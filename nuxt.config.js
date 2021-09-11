@@ -1,3 +1,5 @@
+import colors from 'vuetify/es5/util/colors';
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -31,8 +33,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
-    // https://go.nuxtjs.dev/tailwindcss
-    '@nuxtjs/tailwindcss',
+    '@nuxtjs/vuetify',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -46,5 +47,23 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
-}
+  },
+
+  vuetify: {
+    // customVariables: ['~/assets/variables.scss'],
+    theme: {
+      options: {
+        customProperties: true,
+      },
+      themes: {
+        light: {
+          primary: colors.red.base,
+          secondary: colors.amber.darken3,
+          accent: colors.shades.black,
+          error: colors.red.accent3,
+        },
+      },
+    },
+    treeShake: true,
+  },
+};
