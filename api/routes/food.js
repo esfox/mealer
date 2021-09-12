@@ -34,6 +34,28 @@ foodRouter.post('/', async (request, response) =>
   }
 });
 
+/* Edit food */
+foodRouter.patch('/:id', async (request, response) =>
+{
+  const { id } = request.params;
+  const data = { id, name: request.body.name };
+  try
+  {
+    const result = await food()
+      .where('id', id)
+      .update(data);
+
+    if(result === 0)
+      return response.sendStatus(404);
+
+    response.send(data);
+  }
+  catch(error)
+  {
+    response.sendStatus(500);
+  }
+});
+
 /* Delete food */
 foodRouter.delete('/:id', async (request, response) =>
 {
