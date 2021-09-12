@@ -1,9 +1,9 @@
 <template>
   <v-tabs-items v-model="tab" class="tabs">
     <v-tab-item>
-      <Food />
+      <Foods />
     </v-tab-item>
-    <v-tab-item> hi </v-tab-item>
+    <v-tab-item> </v-tab-item>
   </v-tabs-items>
 </template>
 
