@@ -1,12 +1,18 @@
 <template>
   <div>
-    <div class="food d-flex flex-wrap justify-center pa-12">
+    <div class="food d-flex flex-wrap justify-center pa-8">
       <v-progress-circular v-if="loading" color="primary" size="72" width="8" indeterminate />
       <template v-else>
         <template v-if="foods">
           <h2 v-if="foods.length === 0" class="text--secondary">You haven't added any food yet.</h2>
           <template v-else>
-            <Food v-for="({ name }, i) of foods" :key="i" :name="name" />
+            <Food
+              v-for="({ name }, i) of foods"
+              :id="i"
+              :key="i"
+              :name="name"
+              @delete="deleteFood"
+            />
           </template>
         </template>
       </template>
@@ -45,6 +51,18 @@ export default {
       this.$nuxt.$emit('error', error.response.data);
     }
     this.loading = false;
+  },
+  methods: {
+    async deleteFood(food) {
+      this.loading = true;
+      try {
+        await this.$axios.$delete(`/food/${food.name}`);
+        this.foods = this.foods.filter(({ name }) => name !== food.name);
+      } catch (error) {
+        this.$nuxt.$emit('error', error.response.data);
+      }
+      this.loading = false;
+    },
   },
 };
 </script>

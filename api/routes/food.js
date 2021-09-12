@@ -33,3 +33,20 @@ foodRouter.post('/', async (request, response) =>
       response.sendStatus(500);
   }
 });
+
+/* Delete food */
+foodRouter.delete('/:name', async (request, response) =>
+{
+  const { name } = request.params;
+  try
+  {
+    await food()
+      .where('name', name)
+      .del();
+    response.sendStatus(200);
+  }
+  catch(error)
+  {
+    response.sendStatus(500);
+  }
+});
