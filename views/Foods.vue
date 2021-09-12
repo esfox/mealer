@@ -6,13 +6,7 @@
         <template v-if="foods">
           <h2 v-if="foods.length === 0" class="text--secondary">You haven't added any food yet.</h2>
           <template v-else>
-            <Food
-              v-for="({ name }, i) of foods"
-              :id="i"
-              :key="i"
-              :name="name"
-              @delete="deleteFood"
-            />
+            <Food v-for="({ name }, i) of foods" :key="i" :name="name" @delete="deleteFood(i)" />
           </template>
         </template>
       </template>
@@ -53,10 +47,11 @@ export default {
     this.loading = false;
   },
   methods: {
-    async deleteFood(food) {
+    async deleteFood(i) {
       this.loading = true;
       try {
-        await this.$axios.$delete(`/food/${food.name}`);
+        const food = this.foods[i];
+        await this.$axios.$delete(`/food/${food.id}`);
         this.foods = this.foods.filter(({ name }) => name !== food.name);
       } catch (error) {
         this.$nuxt.$emit('error', error.response.data);

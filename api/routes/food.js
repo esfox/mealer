@@ -35,14 +35,15 @@ foodRouter.post('/', async (request, response) =>
 });
 
 /* Delete food */
-foodRouter.delete('/:name', async (request, response) =>
+foodRouter.delete('/:id', async (request, response) =>
 {
-  const { name } = request.params;
+  const { id } = request.params;
   try
   {
     await food()
-      .where('name', name)
+      .where('id', id)
       .del();
+
     response.sendStatus(200);
   }
   catch(error)
