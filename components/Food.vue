@@ -10,7 +10,13 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item class="red--text" link @click="showModal = true">
+            <v-list-item link @click="edit">
+              <v-list-item-title class="d-flex align-center">
+                <v-icon class="mr-2">mdi-pencil</v-icon>
+                Edit
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item class="red--text" link @click="del">
               <v-list-item-title class="d-flex align-center">
                 <v-icon class="mr-2" color="red">mdi-delete</v-icon>
                 Delete
@@ -20,18 +26,40 @@
         </v-menu>
       </div>
     </v-card>
-    <v-dialog v-model="showModal" max-width="300">
+    <v-dialog v-model="showModal" max-width="250">
       <v-card>
-        <v-card-title> Confirm Delete </v-card-title>
-        <v-card-text> Are you sure you want to delete this food? </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn depressed @click="showModal = false">Cancel</v-btn>
-          <v-btn color="red" depressed dark @click="$emit('delete')">
-            <v-icon class="mr-1">mdi-delete</v-icon>
-            Delete
-          </v-btn>
-        </v-card-actions>
+        <template v-if="modalContent === 'edit'">
+          <v-card-title> Edit Food </v-card-title>
+          <v-card-text class="pb-0">
+            <v-text-field
+              v-model="editData.name"
+              label="Name"
+              filled
+              autofocus
+              @focus="onFocusNameEdit"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn depressed @click="closeModal">Cancel</v-btn>
+            <v-btn color="secondary" depressed dark @click="$emit('edit')">
+              <v-icon class="mr-1">mdi-pencil</v-icon>
+              Edit
+            </v-btn>
+          </v-card-actions>
+        </template>
+        <template v-if="modalContent === 'delete'">
+          <v-card-title> Confirm Delete </v-card-title>
+          <v-card-text> Are you sure you want to delete this food? </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn depressed @click="closeModal">Cancel</v-btn>
+            <v-btn color="red" depressed dark @click="$emit('delete')">
+              <v-icon class="mr-1">mdi-delete</v-icon>
+              Delete
+            </v-btn>
+          </v-card-actions>
+        </template>
       </v-card>
     </v-dialog>
   </div>
@@ -47,9 +75,27 @@ export default {
   },
   data() {
     return {
-      showModal: false,
       showMenu: false,
+      showModal: false,
+      modalContent: undefined,
+      editData: {
+        name: this.name,
+      },
     };
+  },
+  methods: {
+    closeModal() {
+      this.editData = { name: this.name };
+      this.showModal = false;
+    },
+    edit() {
+      this.showModal = true;
+      this.modalContent = 'edit';
+    },
+    del() {
+      this.showModal = true;
+      this.modalContent = 'delete';
+    },
   },
 };
 </script>
