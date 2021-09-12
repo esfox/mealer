@@ -1,6 +1,8 @@
 import colors from 'vuetify/es5/util/colors';
 
 export default {
+  target: 'server',
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'mealer',
@@ -46,8 +48,14 @@ export default {
     '@nuxtjs/axios',
   ],
 
+  serverMiddleware: [
+    { path: '/api', handler: '~/api/api.js' },
+  ],
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: '/api',
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
