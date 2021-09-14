@@ -38,17 +38,18 @@ foodRouter.post('/', async (request, response) =>
 foodRouter.patch('/:id', async (request, response) =>
 {
   const { id } = request.params;
-  const data = { id, name: request.body.name };
+  const data = { name: request.body.name };
   try
   {
-    const result = await food()
+    const [result] = await food()
       .where('id', id)
+      .returning('*')
       .update(data);
 
-    if(result === 0)
+    if(!result)
       return response.sendStatus(404);
 
-    response.send(data);
+    response.send(result);
   }
   catch(error)
   {
