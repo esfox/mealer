@@ -1,16 +1,14 @@
 <template>
   <DialogContent
-    title="Add Food"
-    :colored-title-bar="true"
+    :title="`Edit '${initialName}'`"
     :loading="loading"
     :error="error"
     @cancel="cancel"
     @confirm="save"
   >
     <v-text-field
-      v-model="food.name"
+      v-model="name"
       label="Name"
-      placeholder="Pizza"
       filled
       autofocus
       hide-details="auto"
@@ -25,34 +23,38 @@
 
 <script>
 export default {
+  props: {
+    food: {
+      type: Object,
+      default: () => ({ id: 0, name: '' }),
+    },
+  },
   data() {
     return {
-      food: {
-        name: '',
-      },
+      name: this.food.name,
       loading: false,
       error: undefined,
       nameError: undefined,
     };
   },
+  computed: {
+    initialName() {
+      return this.food.name;
+    },
+  },
   methods: {
     cancel() {
       this.$emit('cancel');
-      this.food = {};
-      this.error = undefined;
-      this.nameError = undefined;
     },
     async save() {
       this.loading = true;
       try {
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        const savedFood = await this.$axios.$post('/food', this.food);
-        this.food = {};
-        this.$emit('save', savedFood);
+        const editedFood = await this.$axios.$patch(`/food/${this.food.id}`, { name: this.name });
+        this.$emit('save', editedFood);
       } catch (error) {
         const { status } = error.response;
-        if (status === 409) this.nameError = 'This food name already exists';
-        else if (status === 400) this.nameError = 'Invalid input';
+        if (status === 400) this.error = 'Invalid input';
         else this.error = 'An unknown error occurred';
       }
       this.loading = false;
