@@ -21,8 +21,8 @@ foodRouter.post('/', async (request, response) =>
   const data = { name };
   try
   {
-    await food().insert(data);
-    response.json(data);
+    const [result] = await food().returning('*').insert(data);
+    response.json(result);
   }
   catch(error)
   {
