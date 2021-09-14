@@ -6,12 +6,28 @@
         <template v-if="foods">
           <h2 v-if="foods.length === 0" class="text--secondary">You haven't added any food yet.</h2>
           <template v-else>
-            <Food v-for="({ name }, i) of foods" :key="i" :name="name" @delete="deleteFood(i)" />
+            <Food
+              v-for="(food, i) of foods"
+              :key="i"
+              :name="food.name"
+              @edit="promptEdit(food)"
+              @delete="promptDelete(food)"
+            />
           </template>
         </template>
       </template>
     </div>
-    <AddFood v-model="toAddFood" @save="(food) => foods.push(food)" />
+    <v-dialog v-model="showModal" max-width="350" persistent>
+      <template v-if="modalContent === 'add-food'">
+        <AddFood @save="addFood" @cancel="closeModal" />
+      </template>
+      <template v-if="modalContent === 'edit-food'">
+        <EditFood :food="foodToEdit" @save="editFood" @cancel="closeModal" />
+      </template>
+      <template v-if="modalContent === 'delete-food'">
+        <DeleteFood :food="foodToDelete" @delete="deleteFood" @cancel="closeModal" />
+      </template>
+    </v-dialog>
     <v-btn
       class="add-food font-weight-bold ma-8"
       color="secondary"
@@ -19,7 +35,7 @@
       rounded
       dark
       x-large
-      @click="toAddFood = !toAddFood"
+      @click="openModal('add-food')"
     >
       <v-icon class="mr-1 text-h4">mdi-plus</v-icon>
       <h3>Add Food</h3>
@@ -32,7 +48,10 @@ export default {
   data() {
     return {
       foods: undefined,
-      toAddFood: false,
+      showModal: false,
+      modalContent: undefined,
+      foodToEdit: undefined,
+      foodToDelete: undefined,
       loading: false,
     };
   },
@@ -47,16 +66,33 @@ export default {
     this.loading = false;
   },
   methods: {
-    async deleteFood(i) {
-      this.loading = true;
-      try {
-        const food = this.foods[i];
-        await this.$axios.$delete(`/food/${food.id}`);
-        this.foods = this.foods.filter(({ name }) => name !== food.name);
-      } catch (error) {
-        this.$nuxt.$emit('error', error.response.data);
-      }
-      this.loading = false;
+    openModal(modalContent) {
+      this.showModal = true;
+      this.modalContent = modalContent;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.modalContent = undefined;
+    },
+    promptEdit(foodToEdit) {
+      this.openModal('edit-food');
+      this.foodToEdit = foodToEdit;
+    },
+    promptDelete(foodToDelete) {
+      this.openModal('delete-food');
+      this.foodToDelete = foodToDelete;
+    },
+    addFood(food) {
+      this.foods.push(food);
+      this.closeModal();
+    },
+    editFood(food) {
+      this.foods.find(({ id }) => id === food.id).name = food.name;
+      this.closeModal();
+    },
+    deleteFood(food) {
+      this.foods = this.foods.filter(({ name }) => name !== food.name);
+      this.closeModal();
     },
   },
 };
