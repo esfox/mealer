@@ -1,9 +1,11 @@
 <template>
   <v-tabs-items v-model="tab" class="tabs">
     <v-tab-item>
+      <Meals />
+    </v-tab-item>
+    <v-tab-item>
       <Foods />
     </v-tab-item>
-    <v-tab-item> </v-tab-item>
   </v-tabs-items>
 </template>
 
@@ -12,12 +14,12 @@ export default {
   data() {
     return {
       tab: 0,
-    }
+    };
   },
   created() {
-    this.$nuxt.$on('tab-change', (tab) => (this.tab = tab))
+    this.$nuxt.$on('tab-change', (tab) => (this.tab = tab));
   },
-}
+};
 </script>
 
 <style lang="scss">

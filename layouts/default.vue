@@ -6,11 +6,11 @@
         <v-tabs v-model="tab" slider-size="4" grow @change="$nuxt.$emit('tab-change', tab)">
           <v-tab class="font-weight-bold py-4">
             <v-icon large class="pr-3">mdi-food-fork-drink</v-icon>
-            <h2>Food</h2>
+            <h2>Meals</h2>
           </v-tab>
           <v-tab class="font-weight-bold py-4">
             <v-icon class="pr-3">mdi-calendar-month</v-icon>
-            <h2>Meals</h2>
+            <h2>Food</h2>
           </v-tab>
         </v-tabs>
       </template>
