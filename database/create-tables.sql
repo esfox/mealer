@@ -8,14 +8,21 @@ create unique index if not exists "food_name" on "food"("name");
 
 -- Meal Times
 create table if not exists "mealTimes" (
-  "id" integer primary key,
+  "id" serial primary key,
   "name" varchar(255) unique not null
 );
 
 create unique index if not exists "meal_time_name"  on "mealTimes"("name");
 
+insert into "mealTimes" ("name")
+values
+  ('breakfast'),
+  ('lunch'),
+  ('dinner'),
+  ('snack');
+
 -- Meal
-create table if not exists "meal" (
+create table if not exists "meals" (
   "foodID" integer,
   "mealTimeID" integer,
   "date" timestamp
