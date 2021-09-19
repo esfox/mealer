@@ -31,12 +31,9 @@ export default {
     },
     async confirmDelete() {
       this.loading = true;
-      try {
-        await this.$axios.$delete(`/food/${this.food.id}`);
-        this.$emit('delete', this.food);
-      } catch (error) {
-        this.$nuxt.$emit('error', error.response.data);
-      }
+      const { error } = await this.$api.food.del(this.food.id);
+      if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+      else this.$emit('delete', this.food);
       this.loading = false;
     },
   },

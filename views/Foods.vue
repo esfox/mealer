@@ -57,12 +57,9 @@ export default {
   },
   async mounted() {
     this.loading = true;
-    try {
-      const foods = await this.$axios.$get('/food');
-      this.foods = foods;
-    } catch (error) {
-      this.$nuxt.$emit('error', error.response.data);
-    }
+    const { data, error } = await this.$api.food.get();
+    if (data) this.foods = data;
+    if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
     this.loading = false;
   },
   methods: {

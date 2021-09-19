@@ -44,16 +44,19 @@ export default {
     },
     async save() {
       this.loading = true;
-      try {
-        const savedFood = await this.$axios.$post('/food', this.food);
+      const { data, error } = await this.$api.food.add(this.food);
+      if (data) {
         this.food = {};
-        this.$emit('save', savedFood);
-      } catch (error) {
+        this.$emit('save', data);
+      }
+
+      if (error) {
         const { status } = error.response;
         if (status === 409) this.nameError = 'This food name already exists';
         else if (status === 400) this.nameError = 'Invalid input';
         else this.error = 'An unknown error occurred';
       }
+
       this.loading = false;
     },
   },

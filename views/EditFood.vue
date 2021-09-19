@@ -48,10 +48,9 @@ export default {
     },
     async save() {
       this.loading = true;
-      try {
-        const editedFood = await this.$axios.$patch(`/food/${this.food.id}`, { name: this.name });
-        this.$emit('save', editedFood);
-      } catch (error) {
+      const { data, error } = await this.$api.food.edit(this.food.id, { name: this.name });
+      if (data) this.$emit('save', data);
+      if (error) {
         const { status } = error.response;
         if (status === 400) this.error = 'Invalid input';
         else this.error = 'An unknown error occurred';
