@@ -7,8 +7,15 @@ export default Router().use('/food', foodRouter);
 /* Get all food */
 foodRouter.get('/', async (request, response) =>
 {
-  const foods = await food();
-  response.json(foods);
+  try
+  {
+    const foods = await food();
+    response.json(foods);
+  }
+  catch(error)
+  {
+    response.sendStatus(500);
+  }
 });
 
 /* Create food */
