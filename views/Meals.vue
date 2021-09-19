@@ -5,7 +5,13 @@
     </div>
     <template v-else>
       <div class="text--secondary mb-2">Click on a date to add a meal</div>
-      <v-calendar class="calendar" :event-ripple="false" :events="meals" @click:day="showDate">
+      <v-calendar
+        class="calendar"
+        :event-ripple="false"
+        :events="meals"
+        :event-more="false"
+        @click:day="showDate"
+      >
         <template #day-label="{ day }">
           <div class="d-flex py-2">
             <h3 class="flex-grow-1">{{ day }}</h3>
