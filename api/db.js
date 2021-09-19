@@ -6,3 +6,4 @@ export const db = knex({
 });
 
 export const food = () => db('food');
+export const meals = () => db('meals');

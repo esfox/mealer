@@ -1,7 +1,9 @@
 import { foodAPI } from './food';
+import { mealsAPI } from './meals';
 
 export default (context, inject) =>
 {
   const food = foodAPI(context);
-  inject('api', { food });
+  const meals = mealsAPI(context);
+  inject('api', { food, meals });
 };
