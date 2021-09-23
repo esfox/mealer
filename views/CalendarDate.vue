@@ -8,13 +8,27 @@
     scrollable
   >
     <DialogContent :title="title" max-height="500" no-actions colored-title-bar @cancel="cancel">
-      <h2 class="d-flex text--primary align-center">
-        Meals
-        <v-divider class="ml-3" />
-      </h2>
-      <pre
-        >{{ JSON.stringify(meals, null, 2) }}
-      </pre>
+      <div v-if="mealTimes.length === 0" class="text-subtitle-1 text-center">
+        No food set for this day.
+      </div>
+      <div v-for="({ mealTime, foods }, mealTimeIndex) of mealTimes" :key="mealTimeIndex">
+        <h2 class="d-flex text--primary align-center">
+          {{ mealTime.name }}
+          <v-divider class="ml-3" />
+        </h2>
+        <div class="foods d-flex flex-wrap pt-3 pb-5">
+          <v-btn
+            v-for="({ name }, foodIndex) of foods"
+            :key="foodIndex"
+            class="text-body-1 font-weight-medium"
+            color="secondary"
+            depressed
+            rounded
+          >
+            {{ name }}
+          </v-btn>
+        </div>
+      </div>
     </DialogContent>
   </v-bottom-sheet>
 </template>
@@ -39,6 +53,19 @@ export default {
     title() {
       return new Date(this.date).toLocaleDateString('default', { month: 'long', day: 'numeric' });
     },
+    mealTimes() {
+      const mealTimes = {};
+      for (const { mealTime, food } of this.meals) {
+        if (!mealTime) continue;
+
+        const { id } = mealTime;
+        if (!mealTimes[id]) mealTimes[id] = { mealTime, foods: [] };
+
+        mealTimes[id].foods.push(food);
+      }
+
+      return Object.values(mealTimes).sort((a, b) => a.mealTime.id < b.mealTime.id);
+    },
     shown: {
       get() {
         return this.value;
@@ -56,3 +83,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.foods {
+  gap: 0.4rem;
+}
+</style>
