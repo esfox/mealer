@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { format } from 'date-fns';
 import { meals } from '../db';
 
 const mealsRouter = Router();
@@ -23,7 +24,7 @@ mealsRouter.get('/', async (request, response) =>
     const mealsData = {};
     for(const { date, foodID, foodName, mealTimeID, mealTimeName } of data)
     {
-      const dateString = date.toISOString();
+      const dateString = format(date, 'yyyy-MM-dd');
       if(!mealsData[dateString])
         mealsData[dateString] = [];
 
