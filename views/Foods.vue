@@ -17,7 +17,7 @@
         </template>
       </template>
     </div>
-    <v-dialog v-model="showModal" max-width="350" persistent>
+    <portal to="dialog">
       <template v-if="modalContent === 'add-food'">
         <AddFood @save="addFood" @cancel="closeModal" />
       </template>
@@ -27,7 +27,7 @@
       <template v-if="modalContent === 'delete-food'">
         <DeleteFood :food="foodToDelete" @delete="deleteFood" @cancel="closeModal" />
       </template>
-    </v-dialog>
+    </portal>
     <v-btn
       class="add-food font-weight-bold ma-8"
       color="secondary"
@@ -48,7 +48,6 @@ export default {
   data() {
     return {
       foods: undefined,
-      showModal: false,
       modalContent: undefined,
       foodToEdit: undefined,
       foodToDelete: undefined,
@@ -64,11 +63,11 @@ export default {
   },
   methods: {
     openModal(modalContent) {
-      this.showModal = true;
+      this.$nuxt.$emit('dialog', true);
       this.modalContent = modalContent;
     },
     closeModal() {
-      this.showModal = false;
+      this.$nuxt.$emit('dialog', false);
       this.modalContent = undefined;
     },
     promptEdit(foodToEdit) {
