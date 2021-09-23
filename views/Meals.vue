@@ -76,6 +76,9 @@ export default {
     if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
     this.loading = false;
   },
+  created() {
+    this.$nuxt.$on('tab-change', () => (this.dateShown = false));
+  },
   methods: {
     showDate({ date }) {
       this.dateShown = true;
@@ -106,6 +109,7 @@ export default {
     height: 2.25rem !important;
     display: grid;
     place-items: center;
+    border-radius: 999px !important;
     margin: auto !important;
     margin-block-start: 0.25rem !important;
   }

@@ -21,7 +21,6 @@
             v-for="({ name }, foodIndex) of foods"
             :key="foodIndex"
             class="text-body-1 font-weight-medium"
-            color="secondary"
             depressed
             rounded
           >
@@ -29,6 +28,10 @@
           </v-btn>
         </div>
       </div>
+      <v-btn class="d-block mt-4 mx-auto" color="secondary" rounded dark depressed large>
+        <v-icon class="text-h5 mr-1">mdi-plus</v-icon>
+        Add Food
+      </v-btn>
     </DialogContent>
   </v-bottom-sheet>
 </template>
