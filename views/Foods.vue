@@ -3,29 +3,29 @@
     <div class="food d-flex flex-wrap justify-center pa-8">
       <v-progress-circular v-if="loading" color="primary" size="72" width="8" indeterminate />
       <template v-else>
-        <template v-if="foods">
-          <h2 v-if="foods.length === 0" class="text--secondary">You haven't added any food yet.</h2>
-          <template v-else>
-            <Food
-              v-for="(food, i) of foods"
-              :key="i"
-              :name="food.name"
-              @edit="promptEdit(food)"
-              @delete="promptDelete(food)"
-            />
-          </template>
+        <h2 v-if="!foods || foods.length === 0" class="text--secondary">
+          You haven't added any food yet.
+        </h2>
+        <template v-else>
+          <Food
+            v-for="(food, i) of foods"
+            :key="i"
+            :name="food.name"
+            @edit="promptEdit(food)"
+            @delete="promptDelete(food)"
+          />
         </template>
       </template>
     </div>
     <portal to="dialog">
       <template v-if="modalContent === 'add-food'">
-        <AddFood @save="addFood" @cancel="closeModal" />
+        <AddFood @finish="closeModal" />
       </template>
       <template v-if="modalContent === 'edit-food'">
-        <EditFood :food="foodToEdit" @save="editFood" @cancel="closeModal" />
+        <EditFood :food="foodToEdit" @finish="closeModal" />
       </template>
       <template v-if="modalContent === 'delete-food'">
-        <DeleteFood :food="foodToDelete" @delete="deleteFood" @cancel="closeModal" />
+        <DeleteFood :food="foodToDelete" @finish="closeModal" />
       </template>
     </portal>
     <v-btn
@@ -47,18 +47,24 @@
 export default {
   data() {
     return {
-      foods: undefined,
       modalContent: undefined,
       foodToEdit: undefined,
       foodToDelete: undefined,
       loading: false,
     };
   },
+  computed: {
+    foods() {
+      return this.$store.state.food.list;
+    },
+  },
   async mounted() {
     this.loading = true;
-    const { data, error } = await this.$api.food.get();
-    if (data) this.foods = data;
-    if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+    try {
+      await this.$store.dispatch('food/load');
+    } catch (error) {
+      this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+    }
     this.loading = false;
   },
   methods: {
@@ -68,7 +74,6 @@ export default {
     },
     closeModal() {
       this.$nuxt.$emit('dialog', false);
-      this.modalContent = undefined;
     },
     promptEdit(foodToEdit) {
       this.openModal('edit-food');
@@ -77,18 +82,6 @@ export default {
     promptDelete(foodToDelete) {
       this.openModal('delete-food');
       this.foodToDelete = foodToDelete;
-    },
-    addFood(food) {
-      this.foods.push(food);
-      this.closeModal();
-    },
-    editFood(food) {
-      this.foods.find(({ id }) => id === food.id).name = food.name;
-      this.closeModal();
-    },
-    deleteFood(food) {
-      this.foods = this.foods.filter(({ name }) => name !== food.name);
-      this.closeModal();
     },
   },
 };

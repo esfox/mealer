@@ -3,7 +3,7 @@
     :title="`Delete '${food.name}'`"
     :loading="loading"
     is-danger
-    @cancel="cancel"
+    @cancel="$emit('finish')"
     @confirm="confirmDelete"
   >
     Are you sure you want to delete '{{ food.name }}'?
@@ -26,14 +26,16 @@ export default {
     };
   },
   methods: {
-    cancel() {
-      this.$emit('cancel');
-    },
     async confirmDelete() {
       this.loading = true;
-      const { error } = await this.$api.food.del(this.food.id);
-      if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
-      else this.$emit('delete', this.food);
+
+      try {
+        await this.$store.dispatch('food/del', this.food.id);
+        this.$emit('finish');
+      } catch (error) {
+        this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+      }
+
       this.loading = false;
     },
   },

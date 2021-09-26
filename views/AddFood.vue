@@ -37,20 +37,19 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit('finish');
       this.food = {};
       this.error = undefined;
       this.nameError = undefined;
     },
     async save() {
       this.loading = true;
-      const { data, error } = await this.$api.food.add(this.food);
-      if (data) {
-        this.food = {};
-        this.$emit('save', data);
-      }
 
-      if (error) {
+      try {
+        await this.$store.dispatch('food/add', this.food);
+        this.food = {};
+        this.$emit('finish');
+      } catch (error) {
         const { status } = error.response;
         if (status === 409) this.nameError = 'This food name already exists';
         else if (status === 400) this.nameError = 'Invalid input';

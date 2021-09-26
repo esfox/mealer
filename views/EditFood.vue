@@ -3,7 +3,7 @@
     :title="`Edit '${initialName}'`"
     :loading="loading"
     :error="error"
-    @cancel="cancel"
+    @cancel="$emit('finish')"
     @confirm="save"
   >
     <v-text-field
@@ -43,18 +43,18 @@ export default {
     },
   },
   methods: {
-    cancel() {
-      this.$emit('cancel');
-    },
     async save() {
       this.loading = true;
-      const { data, error } = await this.$api.food.edit(this.food.id, { name: this.name });
-      if (data) this.$emit('save', data);
-      if (error) {
+
+      try {
+        await this.$store.dispatch('food/edit', { id: this.food.id, name: this.name });
+        this.$emit('finish');
+      } catch (error) {
         const { status } = error.response;
         if (status === 400) this.error = 'Invalid input';
         else this.error = 'An unknown error occurred';
       }
+
       this.loading = false;
     },
   },
