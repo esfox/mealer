@@ -32,34 +32,23 @@
 </template>
 
 <script>
-import { format } from 'date-fns';
-
 export default {
   data() {
     return {
-      meals: [],
-      mealsByDate: {},
       selectedDate: null,
       dateShown: false,
       loading: false,
     };
   },
   computed: {
-    selectedDateMeals() {
-      return this.mealsByDate[this.selectedDate];
+    mealsByDate() {
+      return this.$store.state.meals.mappedByDate;
     },
-  },
-  async mounted() {
-    this.loading = true;
-    const { data, error } = await this.$api.meals.get();
-    if (data) {
+    meals() {
       const meals = [];
-      const mealsByDate = {};
-      for (let date in data) {
-        const mealsThisDate = data[date];
-        date = new Date(date);
-        mealsByDate[format(date, 'yyyy-MM-dd')] = mealsThisDate;
-        for (const { food } of mealsThisDate) {
+      for (let date in this.mealsByDate) {
+        for (const { food } of this.mealsByDate[date]) {
+          date = new Date(date);
           meals.push({
             name: food.name,
             start: date,
@@ -69,14 +58,20 @@ export default {
           });
         }
       }
-      this.mealsByDate = mealsByDate;
-      this.meals = meals;
-    }
-
-    if (error) this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
-    this.loading = false;
+      return meals;
+    },
+    selectedDateMeals() {
+      return this.mealsByDate ? this.mealsByDate[this.selectedDate] : [];
+    },
   },
-  created() {
+  async created() {
+    this.loading = true;
+    try {
+      await this.$store.dispatch('meals/load');
+    } catch (error) {
+      this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+    }
+    this.loading = false;
     this.$nuxt.$on('tab-change', () => (this.dateShown = false));
   },
   methods: {
