@@ -7,3 +7,4 @@ export const db = knex({
 
 export const food = () => db('food');
 export const meals = () => db('meals');
+export const mealTimes = () => db('mealTimes');
