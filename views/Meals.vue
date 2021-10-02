@@ -26,8 +26,12 @@
       v-model="dateShown"
       :date="selectedDate"
       :meals="selectedDateMeals"
+      @set-food="showSetFood"
       @cancel="onHideDate"
     />
+    <v-dialog v-model="setFoodShown" max-width="350" persistent scrollable>
+      <SetFood @finish="setFoodShown = false" />
+    </v-dialog>
   </div>
 </template>
 
@@ -35,9 +39,10 @@
 export default {
   data() {
     return {
+      loading: false,
       selectedDate: null,
       dateShown: false,
-      loading: false,
+      setFoodShown: false,
     };
   },
   computed: {
@@ -78,6 +83,9 @@ export default {
     showDate({ date }) {
       this.dateShown = true;
       this.selectedDate = date;
+    },
+    showSetFood() {
+      this.setFoodShown = true;
     },
     onHideDate() {
       this.dateShown = false;

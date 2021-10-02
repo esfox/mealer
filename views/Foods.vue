@@ -17,17 +17,6 @@
         </template>
       </template>
     </div>
-    <portal to="dialog">
-      <template v-if="modalContent === 'add-food'">
-        <AddFood @finish="closeModal" />
-      </template>
-      <template v-if="modalContent === 'edit-food'">
-        <EditFood :food="foodToEdit" @finish="closeModal" />
-      </template>
-      <template v-if="modalContent === 'delete-food'">
-        <DeleteFood :food="foodToDelete" @finish="closeModal" />
-      </template>
-    </portal>
     <v-btn
       class="add-food font-weight-bold ma-8"
       color="secondary"
@@ -40,6 +29,17 @@
       <v-icon class="mr-1 text-h4">mdi-plus</v-icon>
       <h3>Add Food</h3>
     </v-btn>
+    <v-dialog v-model="showModal" max-width="350" persistent>
+      <template v-if="modalContent === 'add-food'">
+        <AddFood @finish="closeModal" />
+      </template>
+      <template v-if="modalContent === 'edit-food'">
+        <EditFood :food="foodToEdit" @finish="closeModal" />
+      </template>
+      <template v-if="modalContent === 'delete-food'">
+        <DeleteFood :food="foodToDelete" @finish="closeModal" />
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -47,6 +47,7 @@
 export default {
   data() {
     return {
+      showModal: false,
       modalContent: undefined,
       foodToEdit: undefined,
       foodToDelete: undefined,
@@ -58,7 +59,7 @@ export default {
       return this.$store.state.food.list;
     },
   },
-  async mounted() {
+  async created() {
     this.loading = true;
     try {
       await this.$store.dispatch('food/load');
@@ -69,11 +70,11 @@ export default {
   },
   methods: {
     openModal(modalContent) {
-      this.$nuxt.$emit('dialog', true);
+      this.showModal = true;
       this.modalContent = modalContent;
     },
     closeModal() {
-      this.$nuxt.$emit('dialog', false);
+      this.showModal = false;
     },
     promptEdit(foodToEdit) {
       this.openModal('edit-food');

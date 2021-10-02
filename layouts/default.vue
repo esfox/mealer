@@ -21,9 +21,6 @@
     <v-snackbar v-model="error" class="mb-6" color="error" elevation="8" timeout="3000" text>
       {{ errorMessage }}
     </v-snackbar>
-    <v-dialog v-model="showDialog" max-width="350" persistent>
-      <portal-target name="dialog" />
-    </v-dialog>
   </v-app>
 </template>
 
@@ -42,8 +39,6 @@ export default {
       this.error = true;
       this.errorMessage = error;
     });
-
-    this.$nuxt.$on('dialog', (show) => (this.showDialog = show));
   },
 };
 </script>

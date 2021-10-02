@@ -47,7 +47,6 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    'portal-vue/nuxt',
   ],
 
   serverMiddleware: [
