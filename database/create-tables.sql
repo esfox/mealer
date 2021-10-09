@@ -16,18 +16,20 @@ create unique index if not exists "meal_time_name"  on "mealTimes"("name");
 
 insert into "mealTimes" ("name")
 values
-  ('breakfast'),
-  ('lunch'),
-  ('dinner'),
-  ('snack');
+  ('Breakfast'),
+  ('Lunch'),
+  ('Dinner'),
+  ('Snack');
 
--- Meal
+-- Meals
 create table if not exists "meals" (
+  "id" serial primary key,
   "foodID" integer,
   "mealTimeID" integer,
   "date" timestamp
 );
 
-create index if not exists "meal_food_id" on "meal"("foodID");
-create index if not exists "meal_meal_time_id" on "meal"("mealTimeID");
-create index if not exists "meal_date" on "meal"("date");
+create index if not exists "meal_id" on "meals"("id");
+create index if not exists "meal_food_id" on "meals"("foodID");
+create index if not exists "meal_meal_time_id" on "meals"("mealTimeID");
+create index if not exists "meal_date" on "meals"("date");
