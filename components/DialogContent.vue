@@ -1,7 +1,7 @@
 <template>
   <v-card :max-height="maxHeight">
     <v-toolbar
-      class="pr-0"
+      class="toolbar pr-0"
       v-bind="{
         color: coloredTitleBar ? 'primary' : '',
         dark: coloredTitleBar,
@@ -12,7 +12,7 @@
       <v-spacer />
       <v-btn icon :disabled="loading" @click="$emit('cancel')"><v-icon>mdi-close</v-icon></v-btn>
     </v-toolbar>
-    <v-card-text class="px-5" :class="{ 'mt-6': coloredTitleBar }">
+    <v-card-text class="px-5">
       <slot />
     </v-card-text>
     <v-card-actions v-if="!noActions" class="d-flex align-center pb-4 px-5">
@@ -70,3 +70,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.toolbar {
+  z-index: 1;
+}
+</style>

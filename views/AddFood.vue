@@ -9,11 +9,12 @@
   >
     <v-text-field
       v-model="food.name"
+      class="mt-6"
       label="Name"
       placeholder="Pizza"
+      hide-details="auto"
       filled
       autofocus
-      hide-details="auto"
       :error-messages="nameError"
       :disabled="loading"
       @input="nameError = undefined"
