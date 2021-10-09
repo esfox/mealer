@@ -1,19 +1,13 @@
 <template>
   <div>
-    <div class="food d-flex flex-wrap justify-center pa-8">
+    <div class="pa-8">
       <v-progress-circular v-if="loading" color="primary" size="72" width="8" indeterminate />
       <template v-else>
-        <h2 v-if="!foods || foods.length === 0" class="text--secondary">
+        <h2 v-if="!food || food.length === 0" class="text--secondary">
           You haven't added any food yet.
         </h2>
         <template v-else>
-          <Food
-            v-for="(food, i) of foods"
-            :key="i"
-            :name="food.name"
-            @edit="promptEdit(food)"
-            @delete="promptDelete(food)"
-          />
+          <FoodGrid :food="food" class="justify-center" @edit="promptEdit" @delete="promptDelete" />
         </template>
       </template>
     </div>
@@ -55,7 +49,7 @@ export default {
     };
   },
   computed: {
-    foods() {
+    food() {
       return this.$store.state.food.list;
     },
   },
@@ -77,22 +71,18 @@ export default {
       this.showModal = false;
     },
     promptEdit(foodToEdit) {
-      this.openModal('edit-food');
       this.foodToEdit = foodToEdit;
+      this.openModal('edit-food');
     },
     promptDelete(foodToDelete) {
-      this.openModal('delete-food');
       this.foodToDelete = foodToDelete;
+      this.openModal('delete-food');
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.food {
-  gap: 1.5rem;
-}
-
 .add-food {
   position: fixed;
   bottom: 0;

@@ -4,7 +4,7 @@
       <Meals />
     </v-tab-item>
     <v-tab-item>
-      <Foods />
+      <Food />
     </v-tab-item>
   </v-tabs-items>
 </template>
