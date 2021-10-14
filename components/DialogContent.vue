@@ -8,7 +8,10 @@
         elevation: coloredTitleBar ? undefined : 0,
       }"
     >
-      <v-toolbar-title class="font-weight-bold">{{ title }}</v-toolbar-title>
+      <v-toolbar-title class="d-flex align-center font-weight-bold">
+        {{ title }}
+        <slot name="title-append" />
+      </v-toolbar-title>
       <v-spacer />
       <v-btn icon :disabled="loading" @click="$emit('cancel')"><v-icon>mdi-close</v-icon></v-btn>
     </v-toolbar>

@@ -1,72 +1,64 @@
 <template>
-  <div class="pa-12">
-    <div v-if="loading" class="text-center">
+  <div class="meals">
+    <div v-if="loading" class="text-center ma-12">
       <v-progress-circular color="primary" size="72" width="8" indeterminate />
     </div>
-    <template v-else>
-      <div class="text--secondary mb-2">Click on a date to add a meal</div>
-      <v-calendar
-        class="calendar"
-        :event-ripple="false"
-        :events="meals"
-        :event-more="false"
-        @click:day="showDate"
+    <v-list v-else expand>
+      <v-list-group
+        v-for="({ date, formatted }, i) of weekDates"
+        :key="i"
+        :value="true"
+        color="none"
       >
-        <template #day-label="{ day }">
-          <div class="d-flex py-2">
-            <h3 class="flex-grow-1">{{ day }}</h3>
-          </div>
+        <template #activator>
+          <h3 class="mr-4">
+            {{ formatted }}
+          </h3>
+          <v-divider />
         </template>
-        <template #event="{ event }">
-          <h2>{{ event.name }}</h2>
-        </template>
-      </v-calendar>
-    </template>
-    <CalendarDate
-      v-model="dateShown"
-      :date="selectedDate"
-      :meals="selectedDateMeals"
-      @set-food="showSetFood"
-      @cancel="onHideDate"
-    />
-    <v-dialog v-model="setFoodShown" max-width="350" persistent scrollable>
-      <SetFood @finish="setFoodShown = false" />
-    </v-dialog>
+        <v-list-item class="d-block pt-2">
+          <DateMeals :meals="mealsByDate[date]" :date="date" />
+        </v-list-item>
+      </v-list-group>
+    </v-list>
   </div>
 </template>
 
 <script>
+import { startOfWeek, format } from 'date-fns';
+
 export default {
   data() {
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      weekDates.push({
+        formatted: weekStart.toLocaleDateString('default', { month: 'long', day: 'numeric' }),
+        date: format(weekStart, 'yyyy-MM-dd'),
+      });
+      weekStart.setTime(weekStart.getTime() + 1000 * 60 * 60 * 24);
+    }
+
     return {
+      weekDates,
       loading: false,
-      selectedDate: null,
-      dateShown: false,
-      setFoodShown: false,
     };
   },
   computed: {
-    mealsByDate() {
-      return this.$store.state.meals.mappedByDate;
-    },
     meals() {
-      const meals = [];
-      for (let date in this.mealsByDate) {
-        for (const { food } of this.mealsByDate[date]) {
-          date = new Date(date);
-          meals.push({
-            name: food.name,
-            start: date,
-            end: date,
-            color: 'secondary',
-            timed: false,
-          });
-        }
+      return this.$store.state.meals.list;
+    },
+    mealsByDate() {
+      const mealsByDate = {};
+      for (const meal of this.meals) {
+        const { date } = meal;
+        if (!mealsByDate[date]) mealsByDate[date] = [];
+        mealsByDate[date].push(meal);
       }
-      return meals;
+      return mealsByDate;
     },
     selectedDateMeals() {
-      return this.mealsByDate ? this.mealsByDate[this.selectedDate] : [];
+      return this.meals ? this.meals.filter(({ date }) => date === this.selectedDate) : [];
     },
   },
   async created() {
@@ -77,44 +69,15 @@ export default {
       this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
     }
     this.loading = false;
-    this.$nuxt.$on('tab-change', () => (this.dateShown = false));
-  },
-  methods: {
-    showDate({ date }) {
-      this.dateShown = true;
-      this.selectedDate = date;
-    },
-    showSetFood() {
-      this.setFoodShown = true;
-    },
-    onHideDate() {
-      this.dateShown = false;
-    },
   },
 };
 </script>
 
 <style lang="scss">
-.calendar {
-  .v-calendar-weekly__day {
-    padding-block-end: 0.5rem;
-    transition: 0.2s box-shadow;
-    cursor: pointer;
-
-    &:hover {
-      box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 5px 8px 0px rgb(0 0 0 / 14%),
-        0px 1px 14px 0px rgb(0 0 0 / 12%) !important;
-    }
-  }
-
-  .v-event {
-    width: 80% !important;
-    height: 2.25rem !important;
-    display: grid;
-    place-items: center;
-    border-radius: 999px !important;
-    margin: auto !important;
-    margin-block-start: 0.25rem !important;
+.meals {
+  .v-list-item__icon {
+    min-width: 1.5rem !important;
+    margin-left: 0.75rem !important;
   }
 }
 </style>
