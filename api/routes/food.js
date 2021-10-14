@@ -72,6 +72,7 @@ foodRouter.delete('/:id', async (request, response) =>
   {
     await food()
       .where('id', id)
+      .returning('*')
       .del();
 
     response.sendStatus(200);

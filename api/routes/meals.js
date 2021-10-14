@@ -14,6 +14,7 @@ mealsRouter.get('/', async (request, response) =>
       .join('food', 'food.id', 'foodID')
       .join('mealTimes', 'mealTimes.id', 'mealTimeID')
       .select(
+        'meals.id',
         'date',
         'food.id as foodID',
         'food.name as foodName',
@@ -21,14 +22,11 @@ mealsRouter.get('/', async (request, response) =>
         'mealTimes.name as mealTimeName',
       );
 
-    const mealsData = {};
-    for(const { date, foodID, foodName, mealTimeID, mealTimeName } of data)
+    const mealsData = [];
+    for(const { id, date, foodID, foodName, mealTimeID, mealTimeName } of data)
     {
-      const dateString = format(date, 'yyyy-MM-dd');
-      if(!mealsData[dateString])
-        mealsData[dateString] = [];
-
-      mealsData[dateString].push({
+      mealsData.push({
+        id,
         food:
         {
           id: foodID,
@@ -39,6 +37,7 @@ mealsRouter.get('/', async (request, response) =>
           id: mealTimeID,
           name: mealTimeName
         },
+        date: format(date, 'yyyy-MM-dd'),
       });
     }
 
@@ -69,11 +68,35 @@ mealsRouter.post('/', async (request, response) =>
 
   try
   {
-    const foods = await meals()
+    const addedMeals = await meals()
       .returning('*')
       .insert(data);
 
-    response.json(foods);
+    response.json(addedMeals.map(meal => ({ ...meal, date: format(meal.date, 'yyyy-MM-dd') })));
+  }
+  catch(error)
+  {
+    response.sendStatus(500);
+  }
+});
+
+/* Delete meal */
+mealsRouter.delete('/', async (request, response) =>
+{
+  const { foodID, mealTimeID, date } = request.body;
+  if(!foodID || !mealTimeID || !date)
+    return response.sendStatus(400);
+
+  try
+  {
+    const result = await meals()
+      .where('foodID', foodID)
+      .andWhere('mealTimeID', mealTimeID)
+      .andWhere('date', date)
+      .returning('*')
+      .del();
+
+    response.send(result);
   }
   catch(error)
   {
