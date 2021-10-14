@@ -1,9 +1,11 @@
 export const state = () => ({
-  list: undefined,
+  fetched: false,
+  list: [],
 });
 
 export const mutations =
 {
+  setFetched: (state, fetched) => (state.fetched = fetched),
   set: (state, mealTimes) => (state.list = mealTimes),
 };
 
@@ -11,10 +13,19 @@ export const actions =
 {
   async load({ state, commit })
   {
-    if(state.list)
+    if(state.fetched)
       return;
 
-    const data = await this.$api.mealTimes.get();
-    commit('set', data);
+    commit('setFetched', true);
+    try
+    {
+      const data = await this.$api.mealTimes.get();
+      commit('set', data);
+    }
+    catch(error)
+    {
+      commit('setFetched', false);
+      throw error;
+    }
   },
 };
