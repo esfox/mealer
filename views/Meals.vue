@@ -30,7 +30,7 @@
         </v-list-item>
       </v-list-group>
     </v-list>
-    <v-bottom-sheet v-model="addFoodShown" max-width="500" no-click-animation scrollable>
+    <v-dialog v-model="addFoodShown" max-width="500" scrollable>
       <DialogContent
         title="Add Food"
         max-height="600"
@@ -44,10 +44,11 @@
             {{ formattedDate }} | {{ selectedMealTime.name }}
           </span>
         </template>
-        <FoodGrid :food="food" class="pt-6" minimal can-click-food @click:food="setFood" />
+        <div class="pt-4">Click on the food to add</div>
+        <FoodGrid :food="food" class="pt-3" minimal can-click-food @click:food="setFood" />
       </DialogContent>
-    </v-bottom-sheet>
-    <v-bottom-sheet v-model="deleteFoodConfirmShown" max-width="500" no-click-animation scrollable>
+    </v-dialog>
+    <v-dialog v-model="deleteFoodConfirmShown" max-width="500" scrollable>
       <DialogContent
         is-danger
         :title="`Delete '${selectedFood.name}'`"
@@ -60,7 +61,7 @@
         <template #cancel>Cancel</template>
         <template #confirm> <v-icon class="mr-1">mdi-delete</v-icon> Delete </template>
       </DialogContent>
-    </v-bottom-sheet>
+    </v-dialog>
   </div>
 </template>
 
