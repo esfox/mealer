@@ -75,6 +75,8 @@ export default {
 
 <style lang="scss">
 .meals {
+  max-width: 50rem;
+
   .v-list-item__icon {
     min-width: 1.5rem !important;
     margin-left: 0.75rem !important;
