@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="pa-8">
+    <div class="food pa-8">
       <v-progress-circular v-if="loading" color="primary" size="72" width="8" indeterminate />
       <template v-else>
         <h2 v-if="!food || food.length === 0" class="text--secondary">
@@ -83,6 +83,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.food {
+  padding-bottom: 5rem;
+}
+
 .add-food {
   position: fixed;
   bottom: 0;
