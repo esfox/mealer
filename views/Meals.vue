@@ -96,7 +96,13 @@ export default {
   },
   computed: {
     food() {
-      return [...this.$store.state.food.list].sort((a, b) => a.name.localeCompare(b.name));
+      const foodIDsOfSelected = this.getMealTimeFood(
+        this.selectedDate,
+        this.selectedMealTime.id
+      ).map(({ id }) => id);
+      return [...this.$store.state.food.list]
+        .filter(({ id }) => !foodIDsOfSelected.includes(id))
+        .sort((a, b) => a.name.localeCompare(b.name));
     },
     mealTimes() {
       return this.$store.state.mealTimes.list;

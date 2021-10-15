@@ -68,6 +68,25 @@ mealsRouter.post('/', async (request, response) =>
 
   try
   {
+    const foodIDs = [];
+    const mealTimeIDs = [];
+    const dates = [];
+    for(const { foodID, mealTimeID, date } of data)
+    {
+      foodIDs.push(foodID);
+      mealTimeIDs.push(mealTimeID);
+      dates.push(date);
+    }
+
+    const [existing] = await meals()
+      .whereIn('foodID', foodIDs)
+      .and.whereIn('mealTimeID', mealTimeIDs)
+      .and.whereIn('date', dates)
+      .count('id');
+
+    if(parseInt(existing.count))
+      return response.sendStatus(409);
+
     const addedMeals = await meals()
       .returning('*')
       .insert(data);
