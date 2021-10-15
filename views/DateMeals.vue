@@ -151,7 +151,7 @@ export default {
 .meals-food {
   .v-chip {
     background: var(--v-secondary-base) !important;
-    color: white;
+    color: white !important;
 
     .v-chip__close {
       color: white;

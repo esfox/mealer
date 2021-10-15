@@ -1,5 +1,5 @@
 <template>
-  <div class="meals">
+  <div class="meals mx-auto">
     <div v-if="loading" class="text-center ma-12">
       <v-progress-circular color="primary" size="72" width="8" indeterminate />
     </div>
