@@ -32,7 +32,7 @@ export const mutations =
 
 export const getters =
 {
-  getMealTimeFood: (state) => (mealTimeID, date) =>
+  getMealTimeFood: (state) => (date, mealTimeID) =>
   {
     const food = [];
     for(const meal of state.list)
