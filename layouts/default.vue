@@ -1,12 +1,12 @@
 <template>
-  <v-app>
+  <v-app class="app">
     <v-app-bar app dark color="primary">
       <v-toolbar-title class="text-h4 font-weight-bold"> 🍱 Mealer </v-toolbar-title>
     </v-app-bar>
     <v-main>
       <Nuxt />
     </v-main>
-    <v-footer app fixed padless elevation="8">
+    <v-footer class="footer" elevation="8" app fixed padless>
       <v-tabs
         v-model="tab"
         class="tabs"
@@ -52,16 +52,22 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 html {
   overflow-y: auto !important;
 }
 
-.tabs .v-tabs-bar {
-  height: 64px;
-}
+.app {
+  .footer {
+    z-index: 9999;
 
-.v-tab {
-  text-transform: none !important;
+    .tabs .v-tabs-bar {
+      height: 64px;
+    }
+  }
+
+  .v-tab {
+    text-transform: none !important;
+  }
 }
 </style>

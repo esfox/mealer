@@ -3,33 +3,39 @@
     <div v-if="loading" class="text-center ma-12">
       <v-progress-circular color="primary" size="72" width="8" indeterminate />
     </div>
-    <v-list v-else expand>
-      <v-list-group
-        v-for="({ date, formatted }, i) of weekDates"
-        :key="i"
-        :value="true"
-        color="none"
-      >
-        <template #activator>
-          <h3 class="mr-4">
-            {{ formatted }}
-          </h3>
-          <v-divider />
-        </template>
-        <v-list-item class="d-block pt-2">
-          <MealTimeFood
-            v-for="(mealTime, mealTimeIndex) of mealTimes"
-            :key="mealTimeIndex"
-            class="meal-time-food"
-            :meal-time="mealTime"
-            :food="getMealTimeFood(date, mealTime.id)"
-            :loading="loadingMeals.includes(getLoadingKey(date, mealTime))"
-            @add="({ mealTime }) => showSetFood(date, mealTime)"
-            @delete="({ mealTime, food }) => showDeleteFoodConfirm(date, mealTime, food)"
-          />
-        </v-list-item>
-      </v-list-group>
-    </v-list>
+    <template v-else>
+      <v-list class="list" expand>
+        <v-list-group
+          v-for="({ date, formatted }, i) of weekDates"
+          :key="i"
+          :value="true"
+          color="none"
+        >
+          <template #activator>
+            <h3 class="mr-4">
+              {{ formatted }}
+            </h3>
+            <v-divider />
+          </template>
+          <v-list-item class="d-block pt-2">
+            <MealTimeFood
+              v-for="(mealTime, mealTimeIndex) of mealTimes"
+              :key="mealTimeIndex"
+              class="meal-time-food"
+              :meal-time="mealTime"
+              :food="getMealTimeFood(date, mealTime.id)"
+              :loading="loadingMeals.includes(getLoadingKey(date, mealTime))"
+              @add="({ mealTime }) => showSetFood(date, mealTime)"
+              @delete="({ mealTime, food }) => showDeleteFoodConfirm(date, mealTime, food)"
+            />
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-footer class="meals-footer" color="white" elevation="6" height="72" app fixed>
+        <WeekPicker v-model="weekDates" class="mx-auto" />
+        <!-- @change="" -->
+      </v-footer>
+    </template>
     <v-dialog v-model="addFoodShown" max-width="500" scrollable>
       <DialogContent
         title="Add Food"
@@ -66,22 +72,12 @@
 </template>
 
 <script>
-import { startOfWeek, format } from 'date-fns';
+import { getWeekDates } from '~/assets/helpers';
 
 export default {
   data() {
-    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-    const weekDates = [];
-    for (let i = 0; i < 7; i++) {
-      weekDates.push({
-        formatted: weekStart.toLocaleDateString('default', { month: 'long', day: 'numeric' }),
-        date: format(weekStart, 'yyyy-MM-dd'),
-      });
-      weekStart.setTime(weekStart.getTime() + 1000 * 60 * 60 * 24);
-    }
-
     return {
-      weekDates,
+      weekDates: getWeekDates(new Date()).shift(),
 
       addFoodShown: false,
       deleteFoodConfirmShown: false,
@@ -200,7 +196,16 @@ export default {
 
 <style lang="scss">
 .meals {
-  max-width: 50rem;
+  max-width: 40rem;
+
+  .list {
+    padding-bottom: 100px;
+  }
+
+  .meals-footer {
+    z-index: 100;
+    margin-bottom: 64px;
+  }
 
   .v-list-item__icon {
     min-width: 1.5rem !important;
