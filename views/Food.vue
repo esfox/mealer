@@ -89,7 +89,7 @@ export default {
 
 .add-food {
   position: fixed;
-  bottom: 0;
+  bottom: 64px;
   right: 0;
 }
 </style>
