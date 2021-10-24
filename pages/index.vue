@@ -11,9 +11,9 @@
 
 <script>
 export default {
-  // async middleware({ $supabase, redirect }) {
-  //   if (process.client && !(await $supabase.auth.session())) return redirect('/login');
-  // },
+  async middleware({ $supabase, redirect }) {
+    if (process.client && !(await $supabase.auth.session())) return redirect('/login');
+  },
   data() {
     return {
       tab: 0,
@@ -21,18 +21,16 @@ export default {
     };
   },
   created() {
-    if (process.client) {
-      setTimeout(async () => {
-        if (!(await this.$supabase.auth.session())) return this.$router.replace('/login');
-        this.authenticated = true;
-      }, 1000);
+    setTimeout(async () => {
+      if (!(await this.$supabase.auth.session())) return this.$router.replace('/login');
+      this.authenticated = true;
+    }, 1000);
 
-      this.$supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_OUT') this.$router.replace('/login');
-      });
+    this.$supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') this.$router.replace('/login');
+    });
 
-      this.$nuxt.$on('tab-change', (tab) => (this.tab = tab));
-    }
+    this.$nuxt.$on('tab-change', (tab) => (this.tab = tab));
   },
 };
 </script>
