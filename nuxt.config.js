@@ -3,6 +3,11 @@ import colors from 'vuetify/es5/util/colors';
 export default {
   target: 'server',
 
+  publicRuntimeConfig: {
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseKey: process.env.SUPABASE_PUBLIC_KEY,
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'mealer',
@@ -27,6 +32,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/api/index.js', mode: 'client' },
+    { src: '~/plugins/supabase.client.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -47,10 +53,6 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    ['nuxt-supabase', {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_PUBLIC_KEY,
-    }]
   ],
 
   serverMiddleware: [

@@ -71,18 +71,20 @@ export default {
     };
   },
   created() {
-    setTimeout(async () => {
-      const user = await this.$supabase.auth.user();
-      if (!user) return;
-      const { user_metadata: userInfo } = user;
-      this.user.name = userInfo.full_name;
-      this.user.image = userInfo.avatar_url;
-    }, 1000);
+    if (process.client) {
+      setTimeout(async () => {
+        const user = await this.$supabase.auth.user();
+        if (!user) return;
+        const { user_metadata: userInfo } = user;
+        this.user.name = userInfo.full_name;
+        this.user.image = userInfo.avatar_url;
+      }, 1000);
 
-    this.$nuxt.$on('error', (error) => {
-      this.error = true;
-      this.errorMessage = error;
-    });
+      this.$nuxt.$on('error', (error) => {
+        this.error = true;
+        this.errorMessage = error;
+      });
+    }
   },
   methods: {
     async logout() {
