@@ -24,8 +24,9 @@ values
 -- Meals
 create table if not exists "meals" (
   "id" serial primary key,
-  "foodID" integer,
-  "mealTimeID" integer,
+  "foodID" integer not null,
+  "mealTimeID" integer not null,
+  "userID" varchar(40) not null,
   "date" timestamp
 );
 
@@ -33,3 +34,13 @@ create index if not exists "meal_id" on "meals"("id");
 create index if not exists "meal_food_id" on "meals"("foodID");
 create index if not exists "meal_meal_time_id" on "meals"("mealTimeID");
 create index if not exists "meal_date" on "meals"("date");
+
+-- User Food pivot table
+create table if not exists "userFood" (
+  "id" serial primary key,
+  "foodID" integer not null,
+  "userID" varchar(40) not null
+);
+
+create index if not exists "food_id" on "userFood"("foodID");
+create index if not exists "user_id" on "userFood"("userID");
