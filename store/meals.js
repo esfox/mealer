@@ -13,7 +13,6 @@ export const state = () => ({
 
 export const mutations =
 {
-  setFetched: (state, fetched) => (state.fetched = fetched),
   set: (state, meals) => (state.list = meals),
   add: (state, meals) => state.list.push(...meals),
 
@@ -47,22 +46,10 @@ export const getters =
 
 export const actions =
 {
-  async load({ state, commit })
+  async load({ commit }, { from, to })
   {
-    if(state.fetched)
-      return;
-
-    commit('setFetched', true);
-    try
-    {
-      const data = await this.$api.meals.get();
-      commit('set', data);
-    }
-    catch(error)
-    {
-      commit('setFetched', false);
-      throw error;
-    }
+    const data = await this.$api.meals.get(from, to);
+    commit('set', data);
   },
 
   /** @param {Meal[]} meals */

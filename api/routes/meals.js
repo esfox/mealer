@@ -8,6 +8,10 @@ export default Router().use('/meals', mealsRouter);
 /* Get meals */
 mealsRouter.get('/', async (request, response) =>
 {
+  const { from, to } = request.query;
+  if(!from || !to)
+    return response.sendStatus(400);
+
   try
   {
     const data = await meals()
@@ -21,7 +25,9 @@ mealsRouter.get('/', async (request, response) =>
         'mealTimes.id as mealTimeID',
         'mealTimes.name as mealTimeName',
       )
-      .where('food.userID', request.userID);
+      .where('food.userID', request.userID)
+      .andWhere('date', '>=', from)
+      .andWhere('date', '<=', to);
 
     const mealsData = [];
     for(const { id, date, foodID, foodName, mealTimeID, mealTimeName } of data)

@@ -32,8 +32,7 @@
         </v-list-group>
       </v-list>
       <v-footer class="meals-footer" color="white" elevation="6" height="72" app fixed>
-        <WeekPicker v-model="weekDates" class="mx-auto" />
-        <!-- @change="" -->
+        <WeekPicker v-model="weekDates" class="mx-auto" @input="loadMeals" />
       </v-footer>
     </template>
     <v-dialog v-model="addFoodShown" max-width="500" scrollable>
@@ -115,23 +114,36 @@ export default {
         day: 'numeric',
       });
     },
+    getFromAndTo() {
+      let { 0: from, [this.weekDates.length - 1]: to } = this.weekDates;
+      from = from.date;
+      to = to.date;
+      return { from, to };
+    },
   },
   async created() {
     this.loading = true;
-
     try {
       await Promise.all([
         this.$store.dispatch('food/load'),
         this.$store.dispatch('mealTimes/load'),
-        this.$store.dispatch('meals/load'),
+        this.loadMeals(),
       ]);
     } catch (error) {
       this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
     }
-
     this.loading = false;
   },
   methods: {
+    async loadMeals() {
+      this.loading = true;
+      try {
+        await this.$store.dispatch('meals/load', this.getFromAndTo);
+      } catch (error) {
+        this.$nuxt.$emit('error', error?.response?.data || 'An unknown error occurred');
+      }
+      this.loading = false;
+    },
     getMealTimeFood(date, mealTimeID) {
       return this.$store.getters['meals/getMealTimeFood'](date, mealTimeID);
     },

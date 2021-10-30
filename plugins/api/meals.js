@@ -1,6 +1,6 @@
 export const mealsAPI = ({ $axios }) =>
 ({
-  get: () => $axios.$get('/meals'),
+  get: (from, to) => $axios.$get('/meals', { params: { from, to } }),
 
   /** @param {{ foodID: number, mealTimeID: number, date: string }[]} meals */
   add(meals)
