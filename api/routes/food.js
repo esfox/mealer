@@ -9,7 +9,7 @@ foodRouter.get('/', async (request, response) =>
 {
   try
   {
-    const foods = await food();
+    const foods = await food().where('userID', request.userID);
     response.json(foods);
   }
   catch(error)
@@ -21,23 +21,20 @@ foodRouter.get('/', async (request, response) =>
 /* Create food */
 foodRouter.post('/', async (request, response) =>
 {
-  const { name } = request.body;
+  const { body, userID } = request;
+  const { name } = body;
   if(!name)
     return response.sendStatus(400);
 
-  const data = { name };
   try
   {
-    const [result] = await food().returning('*').insert(data);
+    const [result] = await food().returning('*').insert({ name, userID });
     response.json(result);
   }
   catch(error)
   {
-    /* Duplicate error */
-    if(error.code === '23505')
-      response.sendStatus(409);
-    else
-      response.sendStatus(500);
+    /* Error code 23505 is a duplicate error */
+    response.sendStatus(error.code === '23505' ? 409 : 500);
   }
 });
 
@@ -67,14 +64,11 @@ foodRouter.patch('/:id', async (request, response) =>
 /* Delete food */
 foodRouter.delete('/:id', async (request, response) =>
 {
-  const { id } = request.params;
+  const { params, userID } = request;
+  const { id } = params;
   try
   {
-    await food()
-      .where('id', id)
-      .returning('*')
-      .del();
-
+    await food().where({ id, userID }).returning('*').del();
     response.sendStatus(200);
   }
   catch(error)

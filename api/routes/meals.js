@@ -20,7 +20,8 @@ mealsRouter.get('/', async (request, response) =>
         'food.name as foodName',
         'mealTimes.id as mealTimeID',
         'mealTimes.name as mealTimeName',
-      );
+      )
+      .where('food.userID', request.userID);
 
     const mealsData = [];
     for(const { id, date, foodID, foodName, mealTimeID, mealTimeName } of data)
@@ -109,9 +110,7 @@ mealsRouter.delete('/', async (request, response) =>
   try
   {
     const result = await meals()
-      .where('foodID', foodID)
-      .andWhere('mealTimeID', mealTimeID)
-      .andWhere('date', date)
+      .where({ foodID, mealTimeID, date })
       .returning('*')
       .del();
 
